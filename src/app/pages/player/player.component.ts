@@ -1,8 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
-import { AudioService } from '../../services/audio.service';
 import { StreamState } from '../../interfaces/stream-state';
-import {MatDialog} from '@angular/material/dialog';
 import { faArrowDown, faArrowUp } from '@fortawesome/free-solid-svg-icons';
 
 @Component({
@@ -19,22 +17,18 @@ export class PlayerComponent implements OnInit {
   down = faArrowDown;
   
 
-  constructor(private audioService: AudioService, private http: HttpClient, public dialog: MatDialog) {
+  constructor(private http: HttpClient) {
     // get media files
 
     // listen to stream state
-    this.audioService.getState()
-    .subscribe(state => {
-      this.state = state;
-    });
   }
-  openDialog() {
-    const dialogRef = this.dialog.open(ErrorDialog);
+//  openDialog() {
+//    const dialogRef = this.dialog.open(ErrorDialog);
 
-    dialogRef.afterClosed().subscribe(result => {
-      console.log(result);
-    })
-  }
+//    dialogRef.afterClosed().subscribe(result => {
+//      console.log(result);
+//    })
+//  }
   ngOnInit() {
     this.http.get<any>('http://localhost:8080/farm_system_war_exploded/songs/all').subscribe(data => {
       this.allSongs = data;  
@@ -43,12 +37,16 @@ export class PlayerComponent implements OnInit {
       this.currentSongs = data;  
     })
   }
+  play() {
 
-  playStream(url) {
-    this.audioService.playStream(url)
-    .subscribe(events => {
-      // listening for fun here
-    });
+  }
+
+  pause() {
+
+  }
+
+  isPlaying() {
+    
   }
 
   openFile(file) {
@@ -58,49 +56,12 @@ export class PlayerComponent implements OnInit {
       err => {error = err}
     );
     if(error.status != 200) {
-      this.openDialog();
+      //this.openDialog();
     }
   }
-
-  pause() {
-    this.audioService.pause();
-  }
-
-  play() {
-    this.audioService.play();
-  }
-
-  stop() {
-    this.audioService.stop();
-  }
-
-  next() {
-    const index = this.currentFile.index + 1;
-    const file = this.allSongs[index];
-    this.openFile(file);
-  }
-
-  previous() {
-    const index = this.currentFile.index - 1;
-    const file = this.allSongs[index];
-    this.openFile(file);
-  }
-
-  isFirstPlaying() {
-    return this.currentFile.index === 0;
-  }
-
-  isLastPlaying() {
-    return this.currentFile.index === this.allSongs.length - 1;
-  }
-
-  onSliderChangeEnd(change) {
-    this.audioService.seekTo(change.value);
-  }
 }
-
-@Component({
-  selector: 'error.dialog',
-  templateUrl: 'error.dialog.hml',
-})
-export class ErrorDialog {}
+//@Component({
+//  selector: 'error.dialog',
+//  templateUrl: 'error.dialog.html',
+//})
+//export class ErrorDialog {}
