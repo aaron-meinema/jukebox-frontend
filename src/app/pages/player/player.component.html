@@ -5,17 +5,25 @@
       <span>Audio Player</span>
     </mat-toolbar>
     <div class="content">
-        <div class="logo">
-          <mat-icon>music_note</mat-icon>
-          <div>Audio Player</div>
-      </div>
-      <mat-list color="primary">
-        <h3 mat-subheader>Songs</h3>
-        <mat-list-item *ngFor="let file of files; let i = index" (click)="openFile(file, i)">
+      <h3 mat-subheader>songs in queue</h3>
+      <mat-list color="primary" class="my-list">
+        <mat-list-item *ngFor="let file of currentSongs" class="my-list-item">
           <mat-icon color="primary" mat-list-icon>music_note</mat-icon>
-          <h4 mat-line>{{ file.name }}</h4>
-          <h5 mat-line>by {{ file.artist }}</h5>
-          <mat-icon color="primary" *ngIf="currentFile.index === i && !state?.error">volume_up</mat-icon>
+          <h4 mat-line> {{ file.songName }} </h4>
+          <div class="votebox">
+            <fa-icon class="vote-icon" [icon]="up"></fa-icon>
+            <span class="vote-icon"> {{ file.score }} </span>
+            <fa-icon class="vote-icon" [icon]="down"></fa-icon>
+          </div> 
+          <h6 *ngIf="currentFile.index === i && state?.error">ERROR</h6>
+          <mat-divider></mat-divider>
+        </mat-list-item>
+    </mat-list>
+    <h3 mat-subheader>choose song to add</h3>
+    <mat-list color="primary"  class="my-list2">
+        <mat-list-item *ngFor="let file of allSongs" (click)="openFile(file)">
+          <mat-icon color="primary" mat-list-icon>music_note</mat-icon>
+          <h4 mat-line>{{ file }}</h4>
           <h6 *ngIf="currentFile.index === i && state?.error">ERROR</h6>
           <mat-divider></mat-divider>
         </mat-list-item>

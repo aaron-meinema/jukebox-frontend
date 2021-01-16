@@ -10,7 +10,6 @@
       cursor: pointer;
     }
   }
-
   .content {
     .logo {
       margin: 2.5rem;
@@ -23,10 +22,36 @@
         font-size: 160px !important;
       }
     }
+    .my-list {
+      height: 200px;
+      margin-bottom: 50px;
+      overflow-y: scroll;
+      .mat-list-text {
+        max-width: 50px;
+      }
+      .votebox {
+        position: relative;
+        text-align: left;
+        width: 50px;
+        height: 20px;
+        resize: none;
+        overflow:auto;
+        box-sizing: border-box;
+        .vote-icon {
+          position: relative;
+        }
+      }
+    }
+    .my-list2 {
+      height: 200px;
+      overflow-y: scroll;
+    }
+
   }
 
   .media-footer {
-    position: absolute;
+    position: fixed;
+    text-align: left;
     bottom: 0;
     width: 100%;
     .time-slider {
