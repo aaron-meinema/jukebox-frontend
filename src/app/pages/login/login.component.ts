@@ -15,12 +15,9 @@ export class LoginComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.getAccessToken(this.username, this.password);
   }
 
-  public getAccessToken(username: string, password: string): void {
-    const response = this.service.login(username, password);
-    console.log(response);
+  public login(): void {
+    this.service.login(this.username, this.password);
   }
-
 }

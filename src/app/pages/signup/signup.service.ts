@@ -11,6 +11,6 @@ export class SignupService {
   }
 
   public signup(username: string, password: string): void {
-    this.http.post(`${environment.API_URL}users/signup`, {username, password});
+    this.http.post(`${environment.API_URL}users/signup`, {username, password}).subscribe();
   }
 }
