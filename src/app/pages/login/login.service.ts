@@ -2,6 +2,8 @@ import {Injectable} from '@angular/core';
 import {HttpClient, HttpErrorResponse} from '@angular/common/http';
 import {environment} from '../../../environments/environment';
 import {Router} from '@angular/router';
+import {UserForm} from '../../classes/userForm';
+import {FormGroup} from '@angular/forms';
 
 @Injectable({
   providedIn: 'root'
@@ -12,8 +14,8 @@ export class LoginService {
 
   }
 
-  public login(username: string, password: string): void {
-    this.http.post(`${environment.API_URL}users/login`, {username, password}).subscribe(
+  public login(form: FormGroup): void {
+    this.http.post(`${environment.API_URL}users/login`, new UserForm(form)).subscribe(
       (response: Response) => {
         this.setToken(response['token']);
         console.log(response);

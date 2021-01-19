@@ -1,11 +1,11 @@
 <div class="wrapper">
-  <form class="form-signin">
+  <form [formGroup]="form" (submit)="login()" class="form-signin">
     <h2 class="form-signin-heading">Please login</h2>
-    <input #username (input)="username.value" type="text" class="form-control" placeholder="User Name" required="" autofocus=""/>
-    <input #password (input)="password.value" type="password" class="form-control"  placeholder="Password" required=""/>
+    <input type="text" formControlName="username" placeholder="User Name" required="" autofocus=""/>
+    <input type="password" formControlName="password"  placeholder="Password" required=""/>
     <label class="checkbox">
       <input type="checkbox" value="remember-me" id="rememberMe" name="rememberMe"> Remember me
     </label>
-    <button class="btn btn-lg btn-primary btn-block" type="submit" (click)="login()">Login</button>
+    <button class="btn btn-lg btn-primary btn-block" type="submit">Login</button>
   </form>
 </div>
