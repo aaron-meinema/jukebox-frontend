@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { faArrowDown, faArrowUp } from '@fortawesome/free-solid-svg-icons';
-import { tokenize } from '@angular/compiler/src/ml_parser/lexer';
+import { environment } from 'src/environments/environment';
 
 @Component({
   selector: 'app-player',
@@ -43,13 +43,13 @@ export class PlayerComponent implements OnInit {
         Authorization: 'eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJhZG1pbmlzdHJhdG9yIiwiZXhwIjoxNjEwODE2MDYxLCJpYXQiOjE2MTA3OTgwNjF9.dFevFFkfV4eVWQ_9_g4_EJhAgCgVLCdMIdBOG74GPowb64g-Ierb40WM8RysEXPcMFb44qrw5dljdb89sJhZBg'
       })
     };  
-    this.http.get<any>('http://localhost:8080/farm_system_war_exploded/songs/all', httpOptions).subscribe(data => {
+    this.http.get<any>(environment.API_URL + 'songs/all', httpOptions).subscribe(data => {
       this.allSongs = data;  
     },
     err => {
       console.log(err);
     })
-    this.http.get<any>('http://localhost:8080/farm_system_war_exploded/songs', httpOptions).subscribe(data => {
+    this.http.get<any>(environment.API_URL+ 'songs', httpOptions).subscribe(data => {
       this.currentSongs = data;  
     })
   }
@@ -92,7 +92,7 @@ export class PlayerComponent implements OnInit {
   openFile(file) {
     let song = { songName: file }
     let error;
-    this.http.post<string>('http://localhost:8080/farm_system_war_exploded/songs?songName=' + file, song).subscribe(
+    this.http.post<string>( environment.API_URL + 'songs?songName=' + file, song).subscribe(
       err => {error = err}
     );
     if(error.status != 200) {

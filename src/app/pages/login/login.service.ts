@@ -12,7 +12,7 @@ export class LoginService {
   }
 
   public login(username: string, password: string): void {
-    this.http.post(`${environment.API_URL}login`, {username, password}).subscribe(
+    this.http.post(`${environment.API_URL}users/login`, {username, password}).subscribe(
       (response: Response) => localStorage.setItem('token', response['token']),
       (error: HttpErrorResponse) => console.log(error)
     );
