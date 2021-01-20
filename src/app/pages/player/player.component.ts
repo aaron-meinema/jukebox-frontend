@@ -2,12 +2,14 @@ import { Component, OnInit } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { faArrowDown, faArrowUp } from '@fortawesome/free-solid-svg-icons';
 import { environment } from 'src/environments/environment';
+import {FormBuilder, FormGroup, Validators} from '@angular/forms';
 
 @Component({
   selector: 'app-player',
   templateUrl: './player.component.html',
   styleUrls: ['./player.component.scss']
 })
+
 export class PlayerComponent implements OnInit {
   allSongs: string[] = [];
   currentSongs: Array<any> = [];
@@ -16,45 +18,30 @@ export class PlayerComponent implements OnInit {
   down = faArrowDown;
   isAdmin: boolean;
   isPlaying: boolean;
-  login = {};
+  form : FormGroup
 
   constructor(private http: HttpClient) {
     // get media files
     this.isAdmin = true;
     this.isPlaying = false;
-    this.login = {
-      "login": "administrator",
-      "password": "hello123"
-    };
     // listen to stream state
   }
 
-//  openDialog() {
-//    const dialogRef = this.dialog.open(ErrorDialog);
-
-//    dialogRef.afterClosed().subscribe(result => {
-//      console.log(result);
-//    })
-//  }
   ngOnInit() {
-    const httpOptions = {
-      headers: new HttpHeaders({
-        'Content-Type': 'application/json',
-        Authorization: 'eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJhZG1pbmlzdHJhdG9yIiwiZXhwIjoxNjEwODE2MDYxLCJpYXQiOjE2MTA3OTgwNjF9.dFevFFkfV4eVWQ_9_g4_EJhAgCgVLCdMIdBOG74GPowb64g-Ierb40WM8RysEXPcMFb44qrw5dljdb89sJhZBg'
-      })
-    };  
-    this.http.get<any>(environment.API_URL + 'songs/all', httpOptions).subscribe(data => {
+    this.http.get<any>(environment.API_URL + 'songs/all').subscribe(data => {
       this.allSongs = data;  
     },
     err => {
       console.log(err);
     })
-    this.http.get<any>(environment.API_URL+ 'songs', httpOptions).subscribe(data => {
+    this.http.get<any>(environment.API_URL+ 'songs').subscribe(data => {
       this.currentSongs = data;  
     })
   }
+
   play() {
     this.isPlaying = false;
+    //this.http.post(environment.API_URL + '')
   }
 
   hasNext() {
@@ -95,13 +82,8 @@ export class PlayerComponent implements OnInit {
     this.http.post<string>( environment.API_URL + 'songs?songName=' + file, song).subscribe(
       err => {error = err}
     );
+    this.ngOnInit();
     if(error.status != 200) {
-      //this.openDialog();
     }
   }
 }
-//@Component({
-//  selector: 'error.dialog',
-//  templateUrl: 'error.dialog.html',
-//})
-//export class ErrorDialog {}
