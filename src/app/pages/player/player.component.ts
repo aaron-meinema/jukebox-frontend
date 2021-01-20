@@ -3,6 +3,8 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { faArrowDown, faArrowUp } from '@fortawesome/free-solid-svg-icons';
 import { environment } from 'src/environments/environment';
 import {FormBuilder, FormGroup, Validators} from '@angular/forms';
+import { env } from 'process';
+import { element } from 'protractor';
 
 @Component({
   selector: 'app-player',
@@ -19,6 +21,7 @@ export class PlayerComponent implements OnInit {
   isAdmin: boolean;
   isPlaying: boolean;
   form : FormGroup
+  votes: Array<any> = [];
 
   constructor(private http: HttpClient) {
     // get media files
@@ -37,11 +40,14 @@ export class PlayerComponent implements OnInit {
     this.http.get<any>(environment.API_URL+ 'songs').subscribe(data => {
       this.currentSongs = data;  
     })
+    this.http.get<any>(environment.API_URL + 'vote').subscribe(data => {
+      this.votes = data;
+    })
   }
 
   play() {
     this.isPlaying = false;
-    //this.http.post(environment.API_URL + '')
+    this.http.post<any>(environment.API_URL + 'songs/command?command=play', {}).subscribe();
   }
 
   hasNext() {
@@ -52,11 +58,9 @@ export class PlayerComponent implements OnInit {
   }
   pause() {
     this.isPlaying = true;
+    this.http.post<any>(environment.API_URL + 'songs/command?command=pause', {}).subscribe();
   }
 
-  next() {
-
-  }
   /**
    * return true if user is the administrator and then in combination with the 
    * input playing and whether or not the application is actually playing
@@ -75,6 +79,26 @@ export class PlayerComponent implements OnInit {
     }
     return false;
   }
+
+  vote(songName: string, up: string) {
+    this.http.post<any>(environment.API_URL + 'vote/?songName=' + songName + "&up=" + up, {}).subscribe();
+    this.ngOnInit();
+  }
+  delete(songName) {
+    this.http.delete(environment.API_URL + 'vote/?songName=' + songName, {}).subscribe();
+  }
+
+  hasVoted(songName) {
+    for(let element of this.votes){
+      console.log(element);
+      if(element.songName === songName){
+        console.log("lol");
+        return true;
+      }
+    }
+    return false;
+  }
+  
 
   openFile(file) {
     let song = { songName: file }

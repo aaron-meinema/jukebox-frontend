@@ -11,9 +11,10 @@
           <mat-icon color="primary" mat-list-icon>music_note</mat-icon>
           <h4 mat-line> {{ file.songName }} </h4>
           <div class="votebox">
-            <fa-icon class="vote-icon" [icon]="up"></fa-icon>
+            <fa-icon class="vote-icon" (click)="vote(file.songName, true)" *ngIf="hasVoted(songName)" [icon]="up"></fa-icon>
+            <fa-icon class="vote-icon" (click)="delete(file.songName)" *ngIf="!hasVoted(songName)" [icon]="up"></fa-icon>
             <span class="vote-icon"> {{ file.score }} </span>
-            <fa-icon class="vote-icon" [icon]="down"></fa-icon>
+            <fa-icon class="vote-icon" (click)="vote(file.songName, false)" [icon]="down"></fa-icon>
           </div> 
           <mat-divider></mat-divider>
         </mat-list-item>
@@ -35,9 +36,6 @@
           </button>
           <button mat-button (click)="pause()" *ngIf="playOrPause(false)">
             <mat-icon mat-list-icon>pause</mat-icon>
-          </button>
-          <button  mat-button [disabled]="!hasNext()" (click)="next()" *ngIf="isAdmin">
-            <mat-icon mat-list-icon>skip_next</mat-icon>
           </button>
         </mat-toolbar-row>
       </mat-toolbar>
