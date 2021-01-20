@@ -18,7 +18,9 @@ export class LoginService {
     this.http.post(`${environment.API_URL}users/login`, new UserForm(form)).subscribe(
       (response: Response) => {
         this.setToken(response['token']);
+        this.setRole(response['role']);
         console.log(response);
+        console.log(this.getRole());
         this.router.navigate(['player']);
       },
       (error: HttpErrorResponse) => console.log(error)
@@ -31,5 +33,13 @@ export class LoginService {
 
   public setToken(token: string): void {
     return localStorage.setItem('token', token);
+  }
+
+  public setRole(role: string): void {
+    return localStorage.setItem('role', role);
+  }
+
+  public getRole(): string {
+    return localStorage.getItem('role');
   }
 }
