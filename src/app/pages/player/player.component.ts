@@ -86,18 +86,31 @@ export class PlayerComponent implements OnInit {
   }
   delete(songName) {
     this.http.delete(environment.API_URL + 'vote/?songName=' + songName, {}).subscribe();
+    this.ngOnInit();
   }
+  update(songName: string, up: string) {
+    this.http.put<any>(environment.API_URL + 'vote/?songName=' + songName + "&up=" + up, {}).subscribe();
+    this.ngOnInit();
+  }
+
 
   hasVoted(songName) {
     for(let element of this.votes){
-      console.log(element);
-      if(element.songName === songName){
-        console.log("lol");
+      console.log(element['songName'] + songName);
+      if(element['songName'] === songName){
         return true;
       }
     }
     return false;
   }
+
+  isVote(songName) {
+    for(let element of this.votes) {
+      if(element['songName'] === songName){
+        return element['up'];
+      }
+  }
+}
   
 
   openFile(file) {

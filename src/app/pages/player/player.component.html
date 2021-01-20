@@ -11,10 +11,12 @@
           <mat-icon color="primary" mat-list-icon>music_note</mat-icon>
           <h4 mat-line> {{ file.songName }} </h4>
           <div class="votebox">
-            <fa-icon class="vote-icon" (click)="vote(file.songName, true)" *ngIf="hasVoted(songName)" [icon]="up"></fa-icon>
-            <fa-icon class="vote-icon" (click)="delete(file.songName)" *ngIf="!hasVoted(songName)" [icon]="up"></fa-icon>
+            <fa-icon class="vote-icon" (click)="vote(file.songName, true)" *ngIf="!hasVoted(file.songName)" [icon]="up"></fa-icon>
+            <fa-icon class="vote-icon" (click)="delete(file.songName)" *ngIf="hasVoted(file.songName)" [icon]="up"></fa-icon>
             <span class="vote-icon"> {{ file.score }} </span>
-            <fa-icon class="vote-icon" (click)="vote(file.songName, false)" [icon]="down"></fa-icon>
+            <fa-icon class="vote-icon" (click)="vote(file.songName, false)" *ngIf="!hasVoted(file.songName)" [icon]="down"></fa-icon>
+            <fa-icon class="vote-icon" (click)="delete(file.songName)" *ngIf="hasVoted(file.songName) && isVote(file.songName)" [icon]="down"></fa-icon>
+            <fa-icon class="vote-icon" (click)="delete(file.songName)" *ngIf="hasVoted(file.songName) && !isVote(file.songName)" [icon]="down"></fa-icon>
           </div> 
           <mat-divider></mat-divider>
         </mat-list-item>
