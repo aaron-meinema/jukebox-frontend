@@ -1,13 +1,17 @@
 import { Component, OnInit } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { faArrowDown, faArrowUp } from '@fortawesome/free-solid-svg-icons';
-import { tokenize } from '@angular/compiler/src/ml_parser/lexer';
+import { environment } from 'src/environments/environment';
+import {FormBuilder, FormGroup, Validators} from '@angular/forms';
+import { env } from 'process';
+import { element } from 'protractor';
 
 @Component({
   selector: 'app-player',
   templateUrl: './player.component.html',
   styleUrls: ['./player.component.scss']
 })
+
 export class PlayerComponent implements OnInit {
   allSongs: string[] = [];
   currentSongs: Array<any> = [];
@@ -16,45 +20,34 @@ export class PlayerComponent implements OnInit {
   down = faArrowDown;
   isAdmin: boolean;
   isPlaying: boolean;
-  login = {};
+  form : FormGroup
+  votes: Array<any> = [];
 
   constructor(private http: HttpClient) {
     // get media files
     this.isAdmin = true;
     this.isPlaying = false;
-    this.login = {
-      "login": "administrator",
-      "password": "hello123"
-    };
     // listen to stream state
   }
 
-//  openDialog() {
-//    const dialogRef = this.dialog.open(ErrorDialog);
-
-//    dialogRef.afterClosed().subscribe(result => {
-//      console.log(result);
-//    })
-//  }
   ngOnInit() {
-    const httpOptions = {
-      headers: new HttpHeaders({
-        'Content-Type': 'application/json',
-        Authorization: 'eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJhZG1pbmlzdHJhdG9yIiwiZXhwIjoxNjEwODE2MDYxLCJpYXQiOjE2MTA3OTgwNjF9.dFevFFkfV4eVWQ_9_g4_EJhAgCgVLCdMIdBOG74GPowb64g-Ierb40WM8RysEXPcMFb44qrw5dljdb89sJhZBg'
-      })
-    };  
-    this.http.get<any>('http://localhost:8080/farm_system_war_exploded/songs/all', httpOptions).subscribe(data => {
+    this.http.get<any>(environment.API_URL + 'songs/all').subscribe(data => {
       this.allSongs = data;  
     },
     err => {
       console.log(err);
     })
-    this.http.get<any>('http://localhost:8080/farm_system_war_exploded/songs', httpOptions).subscribe(data => {
+    this.http.get<any>(environment.API_URL+ 'songs').subscribe(data => {
       this.currentSongs = data;  
     })
+    this.http.get<any>(environment.API_URL + 'vote').subscribe(data => {
+      this.votes = data;
+    })
   }
+
   play() {
     this.isPlaying = false;
+    this.http.post<any>(environment.API_URL + 'songs/command?command=play', {}).subscribe();
   }
 
   hasNext() {
@@ -65,11 +58,9 @@ export class PlayerComponent implements OnInit {
   }
   pause() {
     this.isPlaying = true;
+    this.http.post<any>(environment.API_URL + 'songs/command?command=pause', {}).subscribe();
   }
 
-  next() {
-
-  }
   /**
    * return true if user is the administrator and then in combination with the 
    * input playing and whether or not the application is actually playing
@@ -89,19 +80,34 @@ export class PlayerComponent implements OnInit {
     return false;
   }
 
+  vote(songName: string, up: string) {
+    this.http.post<any>(environment.API_URL + 'vote/?songName=' + songName + "&up=" + up, {}).subscribe();
+    this.ngOnInit();
+  }
+  delete(songName) {
+    this.http.delete(environment.API_URL + 'vote/?songName=' + songName, {}).subscribe();
+  }
+
+  hasVoted(songName) {
+    for(let element of this.votes){
+      console.log(element);
+      if(element.songName === songName){
+        console.log("lol");
+        return true;
+      }
+    }
+    return false;
+  }
+  
+
   openFile(file) {
     let song = { songName: file }
     let error;
-    this.http.post<string>('http://localhost:8080/farm_system_war_exploded/songs?songName=' + file, song).subscribe(
+    this.http.post<string>( environment.API_URL + 'songs?songName=' + file, song).subscribe(
       err => {error = err}
     );
+    this.ngOnInit();
     if(error.status != 200) {
-      //this.openDialog();
     }
   }
 }
-//@Component({
-//  selector: 'error.dialog',
-//  templateUrl: 'error.dialog.html',
-//})
-//export class ErrorDialog {}
