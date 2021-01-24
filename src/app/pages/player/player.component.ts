@@ -51,14 +51,13 @@ export class PlayerComponent implements OnInit {
     this.form = this.formBuilder.group({
       song: [null],
     });
-  }
-
-  upload(form: FormGroup) {
-    this.http.post(`${environment.API_URL}files`, new PlayerForm(form));
     this.http.get(environment.API_URL + 'songs/command').subscribe(data => {
       this.playState(data.toString());
     });
-    
+  }
+
+  upload(form: FormGroup) {
+    this.http.post(`${environment.API_URL}files`, new PlayerForm(form));    
   }
 
   private playState(command: string) {

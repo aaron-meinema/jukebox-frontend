@@ -33,6 +33,9 @@
     <div class="media-footer">
       <mat-toolbar color="primary">
         <mat-toolbar-row class="media-action-bar">
+          <form [formGroup]="form">
+            <input type="file" id="songFile" formControlName="song" (change)="upload($event.target.files[0])"/>
+          </form>        
           <button mat-button (click)="play()" [disabled]="disable()" *ngIf="playOrPause(true)">
             <mat-icon mat-list-icon>play_circle_filled</mat-icon>
           </button>
@@ -44,4 +47,3 @@
       </mat-toolbar>
     </div>
 </div>
-
