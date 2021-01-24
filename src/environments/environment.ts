@@ -4,7 +4,7 @@
 
 export const environment = {
   production: false,
-  API_URL: 'http://192.168.178.39:8080/box/',
+  API_URL: 'http://localhost:8080/juke_box_war_exploded/',
 };
 
 /*

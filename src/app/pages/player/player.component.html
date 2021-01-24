@@ -12,11 +12,12 @@
           <h4 mat-line> {{ file.songName }} </h4>
           <div class="votebox">
             <fa-icon class="vote-icon" (click)="vote(file.songName, true)" *ngIf="!hasVoted(file.songName)" [icon]="up"></fa-icon>
-            <fa-icon class="vote-icon" (click)="delete(file.songName)" *ngIf="hasVoted(file.songName)" [icon]="up"></fa-icon>
+            <fa-icon class="vote-icon" (click)="update(file.songName, true)" *ngIf="hasVoted(file.songName) && !isVote(file.songName)" [icon]="up"></fa-icon>
+            <fa-icon class="vote-icon" (click)="delete(file.songName)" *ngIf="hasVoted(file.songName) && isVote(file.songName)" [icon]="up" [styles]="{'stroke': 'green', 'color': 'green'}"></fa-icon>
             <span class="vote-icon"> {{ file.score }} </span>
             <fa-icon class="vote-icon" (click)="vote(file.songName, false)" *ngIf="!hasVoted(file.songName)" [icon]="down"></fa-icon>
-            <fa-icon class="vote-icon" (click)="delete(file.songName)" *ngIf="hasVoted(file.songName) && isVote(file.songName)" [icon]="down"></fa-icon>
-            <fa-icon class="vote-icon" (click)="delete(file.songName)" *ngIf="hasVoted(file.songName) && !isVote(file.songName)" [icon]="down"></fa-icon>
+            <fa-icon class="vote-icon" (click)="update(file.songName, false)" *ngIf="hasVoted(file.songName) && isVote(file.songName)" [icon]="down"></fa-icon>
+            <fa-icon class="vote-icon" (click)="delete(file.songName)" *ngIf="hasVoted(file.songName) && !isVote(file.songName)" [icon]="down" [styles]="{'stroke': 'red', 'color': 'red'}"></fa-icon>
           </div> 
           <mat-divider></mat-divider>
         </mat-list-item>
@@ -33,12 +34,13 @@
     <div class="media-footer">
       <mat-toolbar color="primary">
         <mat-toolbar-row class="media-action-bar">
-          <button mat-button (click)="play()" [disabled]="state?.error" *ngIf="playOrPause(true)">
+          <button mat-button (click)="play()" [disabled]="disable()" *ngIf="playOrPause(true)">
             <mat-icon mat-list-icon>play_circle_filled</mat-icon>
           </button>
           <button mat-button (click)="pause()" *ngIf="playOrPause(false)">
             <mat-icon mat-list-icon>pause</mat-icon>
           </button>
+          <p class="songName">song: {{ playingSong }}</p>
         </mat-toolbar-row>
       </mat-toolbar>
     </div>
