@@ -6,6 +6,8 @@ import {FormBuilder, FormGroup, Validators} from '@angular/forms';
 import {env} from 'process';
 import {element} from 'protractor';
 import {LoginService} from '../login/login.service';
+import {UserForm} from '../../classes/userForm';
+import {PlayerForm} from './playerForm';
 
 @Component({
   selector: 'app-player',
@@ -23,8 +25,9 @@ export class PlayerComponent implements OnInit {
   isPlaying: boolean;
   form: FormGroup;
   votes: Array<any> = [];
+  song: File;
 
-  constructor(private http: HttpClient, private loginService: LoginService) {
+  constructor(private http: HttpClient, private loginService: LoginService, private formBuilder: FormBuilder) {
     // get media files
     this.isAdmin = loginService.getRole();
     this.isPlaying = false;
@@ -44,6 +47,13 @@ export class PlayerComponent implements OnInit {
     this.http.get<any>(environment.API_URL + 'vote').subscribe(data => {
       this.votes = data;
     });
+    this.form = this.formBuilder.group({
+      song: [null],
+    });
+  }
+
+  upload(form: FormGroup) {
+    this.http.post(`${environment.API_URL}files`, new PlayerForm(form));
   }
 
   play() {
@@ -62,6 +72,7 @@ export class PlayerComponent implements OnInit {
     this.isPlaying = true;
     this.http.post<any>(environment.API_URL + 'songs/command?command=pause', {}).subscribe();
   }
+
 
   /**
    * return true if user is the administrator and then in combination with the
@@ -102,7 +113,6 @@ export class PlayerComponent implements OnInit {
     }
     return false;
   }
-
 
   openFile(file) {
     let song = {songName: file};
