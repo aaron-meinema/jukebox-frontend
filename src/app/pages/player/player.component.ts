@@ -1,5 +1,5 @@
 import {Component, OnInit} from '@angular/core';
-import {HttpClient} from '@angular/common/http';
+import {HttpClient, HttpErrorResponse} from '@angular/common/http';
 import {faArrowDown, faArrowUp} from '@fortawesome/free-solid-svg-icons';
 import {environment} from 'src/environments/environment';
 import {FormBuilder, FormGroup} from '@angular/forms';
@@ -33,15 +33,11 @@ export class PlayerComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.http.get<any>(environment.API_URL + 'songs/all').subscribe(data => {
-        this.allSongs = data;
-      },
-      err => {
-        console.log(err);
-      });
-    this.http.get(environment.API_URL + 'songs/current').subscribe(data =>{
+    this.loadSongsFromApi();
+
+    this.http.get(environment.API_URL + 'songs/current').subscribe(data => {
       this.playingSong = data.toString();
-    })
+    });
     this.http.get<any>(environment.API_URL + 'songs').subscribe(data => {
       this.currentSongs = data;
     });
@@ -56,19 +52,36 @@ export class PlayerComponent implements OnInit {
     });
   }
 
-  upload(form: FormGroup) {
-    this.http.post(`${environment.API_URL}files`, new PlayerForm(form));    
+  private loadSongsFromApi(): void {
+    this.http.get<any>(environment.API_URL + 'songs/all').subscribe(data => {
+        this.allSongs = data;
+      },
+      err => {
+        console.log(err);
+      });
+  }
+
+  public upload(file: File): void {
+    console.log(file);
+
+    const form = new FormData();
+    form.append('file', file, file.name);
+
+    this.http.post(`${environment.API_URL}files`, form).subscribe(
+      (response: Response) => this.loadSongsFromApi(),
+      (error: HttpErrorResponse) => console.log(error)
+    );
   }
 
   private playState(command: string) {
-    console.log(command)
-    if(command === "playing") { //display pause button
+    console.log(command);
+    if (command === 'playing') { //display pause button
       this.isPlaying = true;
       this.disablePlay = false;
-    }else if(command === "paused"){// display play button
+    } else if (command === 'paused') {// display play button
       this.isPlaying = false;
       this.disablePlay = false;
-    }else if(this.currentSongs.length == 0){ //grey out the play button
+    } else if (this.currentSongs.length == 0) { //grey out the play button
       this.isPlaying = false;
       this.disablePlay = true;
     } else {
@@ -78,7 +91,7 @@ export class PlayerComponent implements OnInit {
   }
 
   play() {
-    this.http.post<any>(environment.API_URL + 'songs/command?command=play', {}).subscribe( response => {
+    this.http.post<any>(environment.API_URL + 'songs/command?command=play', {}).subscribe(response => {
       this.ngOnInit();
     });
   }
@@ -91,7 +104,7 @@ export class PlayerComponent implements OnInit {
   }
 
   pause() {
-    this.http.post<any>(environment.API_URL + 'songs/command?command=pause', {}).subscribe( response => {
+    this.http.post<any>(environment.API_URL + 'songs/command?command=pause', {}).subscribe(response => {
       this.ngOnInit();
     });
   }
@@ -132,23 +145,25 @@ export class PlayerComponent implements OnInit {
       this.ngOnInit();
     });
   }
+
   update(songName: string, up: boolean) {
-    this.http.put<any>(environment.API_URL + 'vote', {songName: songName, up: up}).subscribe( response =>{
+    this.http.put<any>(environment.API_URL + 'vote', {songName: songName, up: up}).subscribe(response => {
       this.ngOnInit();
     });
   }
-  
+
   sleep(milliseconds) {
     var start = new Date().getTime();
     for (var i = 0; i < 1e7; i++) {
-      if ((new Date().getTime() - start) > milliseconds){
+      if ((new Date().getTime() - start) > milliseconds) {
         break;
       }
     }
   }
+
   hasVoted(songName) {
-    for(let element of this.votes){
-      if(element['songName'] === songName){
+    for (let element of this.votes) {
+      if (element['songName'] === songName) {
         return true;
       }
     }
@@ -156,18 +171,18 @@ export class PlayerComponent implements OnInit {
   }
 
   isVote(songName) {
-    for(let element of this.votes) {
-      if(element['songName'] === songName){
+    for (let element of this.votes) {
+      if (element['songName'] === songName) {
         return element['up'];
       }
+    }
   }
-}
-  
+
 
   openFile(file) {
     let song = {songName: file};
     let error;
-    this.http.post<string>(environment.API_URL + 'songs?songName=' + file, song).subscribe(response =>{
+    this.http.post<string>(environment.API_URL + 'songs?songName=' + file, song).subscribe(response => {
       this.ngOnInit();
     });
   }
